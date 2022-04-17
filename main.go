@@ -1,9 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+)
 
-var mul = 25214903917
-var mask = (1 << 48) - 1
+type terminalValue struct {
+	seed int // 地图种子
+	x    int // 查询x座标
+	z    int // 查询y座标
+}
+
+var (
+	terVar = terminalValue{}
+	mul    = 25214903917
+	mask   = (1 << 48) - 1
+)
 
 func mulandmask(a int) int {
 	return (a*mul + 11) & mask
@@ -32,10 +44,18 @@ func clac(mapseed, blockx, blockz int) [2]int {
 	return relative
 }
 
-func main() {
-	var seed, x, z int
-	fmt.Print("请输入种子,x坐标,z坐标:")
-	fmt.Scanf("%d %d %d", &seed, &x, &z)
+func init() {
+	flag.IntVar(&terVar.seed, "s", 0, "Map seed")
+	flag.IntVar(&terVar.x, "x", 0, "x coordinate")
+	flag.IntVar(&terVar.z, "z", 0, "z coordinate")
+	flag.Parse()
+}
 
-	fmt.Println(clac(seed, x, z))
+func main() {
+	if terVar.seed != 0 || terVar.x != 0 || terVar.z != 0 {
+		fmt.Println(clac(terVar.seed, terVar.x, terVar.z))
+	} else {
+		fmt.Println("Don't have input")
+		return
+	}
 }
